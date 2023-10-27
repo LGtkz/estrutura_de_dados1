@@ -57,7 +57,7 @@ void append_vendas(list_venda **list3, venda a);
 
 void exclude_cliente(list_cliente **list1, cliente a);
 void exclude_carros(list_carro **list2, carro a);
-void exclude_vendas(list_carro **list3, venda a);
+void exclude_vendas(list_venda **list3, venda a);
 
 void display_clientes(list_cliente **list1);
 void display_carros(list_carro **list2);
@@ -68,7 +68,7 @@ int verifica_cod(list_carro **list2, int cod);
 int verifica_quantidade(list_carro **list2, int qtd, int cod);
 int verifica_venda(list_venda **list3, int cpf);
 
-void arch_save(list_cliente **list1, list_carro **list2, list_venda **list3);
+void arch_save(list_cliente **list1, list_carro **list2, list_venda **list3, FILE *arch);
 
 int main(void){
     list_cliente *list1 = NULL;
@@ -355,6 +355,7 @@ int verifica_quantidade(list_carro **list2, int qtd, int cod){
         }
     }
     if(flag == 0) return 0;
+    else return 1;
 }
 
 void append_carros(list_carro **list2, carro a){
@@ -460,7 +461,7 @@ void exclude_cliente(list_cliente **list1, cliente a){
     }
 }
 
-void exclude_carro(list_cliente **list2, carro a){
+void exclude_carro(list_carro **list2, carro a){
     if (*list2 == NULL) {
         return; // Não é possível excluir de uma lista vazia.
     }
@@ -483,14 +484,13 @@ void exclude_carro(list_cliente **list2, carro a){
     }
 }
 
-void exclude_carro(list_venda **list3, venda a){
+void exclude_vendas(list_venda **list3, venda a){
     if (*list3 == NULL) {
         return; // Não é possível excluir de uma lista vazia.
     }
-
-    list_carro* current = *list3;
+    list_venda *current = *list3;
     while (current != NULL) {
-        if (current -> v.num_modelo == a.cod_carro) {
+        if (current -> v.cod_carro == a.cod_carro) {
             if (current->prev != NULL) {
                 current->prev->next = current->next;
             }
@@ -505,4 +505,8 @@ void exclude_carro(list_venda **list3, venda a){
         }
         current = current->next;
     }
+}
+
+void arch_save(list_cliente **list1, list_carro **list2, list_venda **list3, FILE *arch){
+    arch = fopen("carros.txt", "w");
 }
