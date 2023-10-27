@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 typedef struct{
     int dia;
@@ -60,6 +59,8 @@ void display_carros(list_carro **list2);
 void display_vendas(list_venda **list3);
 
 int verifica_cpf(list_cliente **list1, int cpf);
+int verifica_cod(list_carro **list2, int cod);
+int verifica_quantidade(list_carro **list2, int qtd, int cod);
 
 int main(void){
     list_cliente *list1 = NULL;
@@ -140,7 +141,7 @@ int main(void){
                     break;
                     case 3:
                         printf("\n-------------- Cadastro de venda --------------\n\n");
-                        printf("Digite o cpf do cliente:");
+                        printf("Digite o cpf do cliente:\n");
                         scanf("%d", &v.cpf_c);
                         printf("Digite o cod de modelo do carro:\n");
                         scanf("%d", &v.cod_carro);
@@ -150,7 +151,7 @@ int main(void){
                         append_vendas(&list3, v);
                     break;
                     case 4:
-                        printf("Retornando ao menu principal...");
+                        printf("Retornando ao menu principal...\n");
                         system("cls");
                     break;
                     default:
@@ -242,7 +243,7 @@ int main(void){
                 printf("3 - Todos os carros vendidos\n");
                 printf("4 - Quantos clientes fizeram compras acima de R$X valor a sua escolha\n");
                 printf("5 - Quais carros estão com estoque menor que X carros, valor a sua escolha\n");
-                printf("6 - Para retornar ao menu principal");
+                printf("6 - Para retornar ao menu principal\n");
                 scanf("%d", &menu);
                 system("cls");
 
@@ -319,6 +320,33 @@ int verifica_cpf(list_cliente **list1, int cpf){
     else return 1;
 }
 
+int verifica_cod(list_carro **list2, int cod){
+    list_carro *aux = *list2;
+    int flag = 0;
+    while(flag != 1 || aux != NULL){
+        if(aux -> v.num_modelo == cod){
+            flag = 1;
+        }
+        aux = aux -> next;
+    }
+    if(flag == 0) return 0;
+    else return 1;
+}
+
+int verifica_quantidade(list_carro **list2, int qtd, int cod){
+    list_carro *aux = *list2;
+    int flag = 0;
+    while(flag != 1 || aux != NULL){
+        if(aux -> v.num_modelo == cod){
+            if(aux -> v.qtd > qtd){
+                flag = 1;
+                return aux -> v.qtd;
+            }
+        }
+    }
+    if(flag == 0) return 0;
+}
+
 void append_carros(list_carro **list2, carro a){
     list_carro *newNode = (list_carro*)malloc(sizeof(list_carro));
     newNode -> v = a;
@@ -348,7 +376,7 @@ void append_vendas(list_venda **list3, venda a){
         *list3 = newNode;
     }
     else{
-        list_carro *current = (*list3);
+        list_venda *current = *list3;
         while(current -> next != NULL){
             current = current -> next;
         }
