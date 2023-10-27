@@ -54,6 +54,11 @@ typedef struct list_venda{
 void append_cliente(list_cliente **list1, cliente a);
 void append_carros(list_carro **list2, carro a);
 void append_vendas(list_venda **list3, venda a);
+
+void exclude_cliente(list_cliente **list1, cliente a);
+void exclude_carros(list_carro **list2, carro a);
+void exclude_vendas(list_carro **list3, venda a);
+
 void display_clientes(list_cliente **list1);
 void display_carros(list_carro **list2);
 void display_vendas(list_venda **list3);
@@ -61,6 +66,9 @@ void display_vendas(list_venda **list3);
 int verifica_cpf(list_cliente **list1, int cpf);
 int verifica_cod(list_carro **list2, int cod);
 int verifica_quantidade(list_carro **list2, int qtd, int cod);
+int verifica_venda(list_venda **list3, int cpf);
+
+void arch_save(list_cliente **list1, list_carro **list2, list_venda **list3);
 
 int main(void){
     list_cliente *list1 = NULL;
@@ -97,21 +105,21 @@ int main(void){
                         gets(c.nome);
                         printf("Digite o CPF:\n");
                         scanf("%d", &c.cpf);
-                            printf("Digite o endereço do cliente:\n");
-                            printf("Rua:\n");
-                            fflush(stdin);
-                            gets(c.end.rua);
-                            printf("Cidade:\n");
-                            fflush(stdin);
-                            gets(c.end.cidade);
-                            printf("Estado:\n");
-                            fflush(stdin);
-                            gets(c.end.estado);
-                            printf("Data de nascimento do cliente:\n");
-                            printf("Dia/Mes/Ano\n");
-                            scanf("%d %d %d", &c.d_nasc.dia, &c.d_nasc.mes, &c.d_nasc.ano);
-                            system("cls");
-                            append_cliente(&list1, c);
+                        printf("Digite o endereço do cliente:\n");
+                        printf("Rua:\n");
+                        fflush(stdin);
+                        gets(c.end.rua);
+                        printf("Cidade:\n");
+                        fflush(stdin);
+                        gets(c.end.cidade);
+                        printf("Estado:\n");
+                        fflush(stdin);
+                        gets(c.end.estado);
+                        printf("Data de nascimento do cliente:\n");
+                        printf("Dia/Mes/Ano\n");
+                        scanf("%d %d %d", &c.d_nasc.dia, &c.d_nasc.mes, &c.d_nasc.ano);
+                        system("cls");
+                        append_cliente(&list1, c);
                     break;
                     case 2:
                         printf("\n-------------- Cadastro de veiculo --------------\n\n");
@@ -213,6 +221,7 @@ int main(void){
                         printf("\n-------------- Excluir Clientes --------------\n\n");
                         printf("Digite o cpf do cliente que deseja excluir\n");
                         scanf("%d", &c.cpf);
+                        exclude_cliente(&list1, c);
                         system("cls");
                     break;
                     case 2:
@@ -225,6 +234,7 @@ int main(void){
                         printf("\n-------------- Excluir vendas --------------\n\n");
                         printf("Digite o codigo do veiculo atrelado a venda que deseja excluir:\n");
                         scanf("%d", &v.cod_carro);
+                        system("cls");
                     break;
                     case 4:
                         printf("Retorando ao menu principal...\n");
@@ -424,4 +434,75 @@ void display_vendas(list_venda **list3){
         aux = aux -> next;
     }
     printf("NULL");
+}
+
+void exclude_cliente(list_cliente **list1, cliente a){
+    if (*list1 == NULL) {
+        return; // Não é possível excluir de uma lista vazia.
+    }
+
+    list_cliente* current = *list1;
+    while (current != NULL) {
+        if (current-> c.cpf == a.cpf) {
+            if (current->prev != NULL) {
+                current->prev->next = current->next;
+            }
+            if (current->next != NULL) {
+                current->next->prev = current->prev;
+            }
+            if (*list1 == current) {
+                *list1 = current->next;
+            }
+            free(current);
+            return; // Nó encontrado e excluído, saia da função.
+        }
+        current = current->next;
+    }
+}
+
+void exclude_carro(list_cliente **list2, carro a){
+    if (*list2 == NULL) {
+        return; // Não é possível excluir de uma lista vazia.
+    }
+    list_carro* current = *list2;
+    while (current != NULL) {
+        if (current -> v.num_modelo == a.num_modelo) {
+            if (current->prev != NULL) {
+                current->prev->next = current->next;
+            }
+            if (current->next != NULL) {
+                current->next->prev = current->prev;
+            }
+            if (*list2 == current) {
+                *list2 = current->next;
+            }
+            free(current);
+            return; // Nó encontrado e excluído, saia da função.
+        }
+        current = current->next;
+    }
+}
+
+void exclude_carro(list_venda **list3, venda a){
+    if (*list3 == NULL) {
+        return; // Não é possível excluir de uma lista vazia.
+    }
+
+    list_carro* current = *list3;
+    while (current != NULL) {
+        if (current -> v.num_modelo == a.cod_carro) {
+            if (current->prev != NULL) {
+                current->prev->next = current->next;
+            }
+            if (current->next != NULL) {
+                current->next->prev = current->prev;
+            }
+            if (*list3 == current) {
+                *list3 = current->next;
+            }
+            free(current);
+            return; // Nó encontrado e excluído, saia da função.
+        }
+        current = current->next;
+    }
 }
